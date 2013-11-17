@@ -1,0 +1,11 @@
+{
+  "name": "html-tags-remover",
+  "description": "A service to remove html tags",
+  "author": "Luís Portela Afonso <meligaletiko@gmail.com>",
+  "dependencies": {
+    "cluster2": ">=0.4.x",
+    "express": "3.4.x",
+    "htmlparser2": "3.3.x"
+  },
+  "engine": "node >= 0.4.1"
+}
