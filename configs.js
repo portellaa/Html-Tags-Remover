@@ -22,6 +22,8 @@ var notCleanTags = {
 	"strong" : "*"
 };
 
+var notCleanSpecialTags = [ "title", "img" ];
+
 // Variable that defines how the process should run
 // 0 - Single, no cluster is used
 // 1 - Multiple, cluster is used
@@ -49,6 +51,11 @@ exports.newAttributes = function()
 exports.notCleanTags = function()
 {
 	return notCleanTags;
+};
+
+exports.notCleanSpecialTags = function()
+{
+	return notCleanSpecialTags;
 };
 
 exports.http = {

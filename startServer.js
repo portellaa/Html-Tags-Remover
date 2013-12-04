@@ -123,16 +123,15 @@ var getHTMLFromURL = function(response, cleaner, data, cb)
             return;
         }
 
-        res.setEncoding('utf8');
         var encoding = 'utf8';
         var headers = res.headers;
         if (headers.hasOwnProperty("content-type"))
         {
-            console.log("Encoding: ", headers["content-type"]);
             var patt = new RegExp("charset=(.*)","i");
-            console.log("Charset: ", patt.exec(headers["content-type"]));
+            var charset = patt.exec(headers["content-type"]);
+            console.log("charset: ", charset[1]);
         }
-        console.log("Headers: ", headers);
+        res.setEncoding(encoding);
         
         var finalData = "";
         res.on("data", function(data) {

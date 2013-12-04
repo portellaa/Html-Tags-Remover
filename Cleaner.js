@@ -5,6 +5,8 @@ var tags;
 var parser;
 
 
+var title;
+var img = [];
 var finalText;
 var lastTags;
 
@@ -310,6 +312,14 @@ var Cleaner = function (data)
 		return false;
 	};
 
+	this.lastTag = function()
+	{
+		if (this.lastTags.length > 0)
+			return this.lastTags[this.lastTags.length-1];
+
+		return false;
+	};
+
 	var context = this;
 
 	this.parser = new htmlparser.Parser(
@@ -320,13 +330,25 @@ var Cleaner = function (data)
 			context.addLastTag(name, isForbidden);
 			console.log("[Cleaner]:[onopentag] -> tag: " + name + " isForbidden: " + isForbidden);
 
+			if (name === "img")
+				context.img.push(attribs);
+
 			if ((isForbidden === false) && (context.clean === true))
 				context.openTag(name, attribs);
 		},
 		ontext: function (text)
 		{
-			if (((context.isLastTagForbidden() === false) && (context.clean === true)) || ((context.isLastTagForbidden() === true) && (context.clean === false)))
-				context.finalText += text;
+			var lastTag = context.lastTag();
+
+			if (lastTag !== false)
+			{
+				if (lastTag.tag === "title")
+					context.title = text;
+
+				if (((lastTag.forbidden === false) && (context.clean === true)) || ((lastTag.forbidden === true) && (context.clean === false)))
+					context.finalText += text;
+			}
+
 		},
 		onclosetag: function (name)
 		{
@@ -338,6 +360,10 @@ var Cleaner = function (data)
 			}
 		}
 	});
+
+	this.buildImgObject = function()
+	{
+	};
 };
 
 Cleaner.prototype = {
@@ -357,6 +383,7 @@ Cleaner.prototype = {
 		{
 			this.finalText = "";
 			this.lastTags = [];
+			this.img = [];
 
 			if ((this.tags === undefined) || ((this.allTagsForbidden === true) && (this.allAttribsForbidden === true)))
 				result.push(strip_tags(src[i]));
@@ -364,7 +391,12 @@ Cleaner.prototype = {
 			{
 				this.parser.write(src[i]);
 				
-				result.push(this.finalText);
+				result.push(
+					{
+						"title" : this.title,
+						"img" : this.img,
+						"description" : this.finalText
+					});
 			}
 		}
 		if (this.parser !== undefined)
