@@ -56,15 +56,18 @@ var handleRequest = function (response, data, cb) {
     var result = {code: 400, message: 'No parameters specified.', format: data.format || "json"};
     var cleaner = new Cleaner({"tags": data.tags, "clean": data.clean});
 
+    console.log(data);
+    console.log("Src is instanceof array: " + (data.src instanceof Array));
+
     if (data.hasOwnProperty("src") && (!(data.src instanceof Array)))
     {
         data.src = [ data.src ];
 
         sendToCleaner(response, cleaner, data, cb);
     }
-    else if (data.hasOwnProperty("src[]") && (!(data.src instanceof Array)))
+    else if ((data.hasOwnProperty("src") || data.hasOwnProperty("src[]")) && ((data.src instanceof Array)))
     {
-        data.src = [ data["src[]"] ];
+        data.src = [ data["src"] ];
 
         sendToCleaner(response, cleaner, data, cb);
     }
@@ -72,9 +75,11 @@ var handleRequest = function (response, data, cb) {
     {
         getHTMLFromURL(response, cleaner, data, cb);
     }
-    else if (data.hasOwnProperty("url[]") && (!(data.url instanceof Array)))
+    else if ((data.hasOwnProperty("url") || data.hasOwnProperty("url[]")) && ((data.url instanceof Array)))
     {
-        data.url = [ data["url[]"] ];
+        cb(response, {code: 400, message: 'Not supported yet.', format: data.format || "json"});
+        // for (var i = 0; i < data["url"].length; i++)
+        //     getHTMLFromURL(response, cleaner, data["url"][i], cb);
     }
     else
     {
