@@ -4,36 +4,61 @@ var configs = require("./configs.js");
 var tags;
 var parser;
 
+
 var finalText;
 var lastTags;
 
 var allTagsForbidden = false;
 var allAttribsForbidden = false;
+var clean = true;
 
-var Cleaner = function (tags)
+var Cleaner = function (data)
 {
-	if ((tags === undefined) || (tags === null))
+	console.log("[Cleaner]: Init with data: ", data);
+	if ((data === undefined) || (data === null))
 	{
 		this.allTagsForbidden = true;
 		this.allAttribsForbidden = true;
 		return;
 	}
 
+	if ((data.tags === undefined) || (data.tags === null))
+	{
+		console.log("[Cleaner]: Tags undefined.");
+		if (((data.clean !== undefined) || (data.clean !== null)) && ((data.clean == false) || (data.clean == 'false')))
+		{
+			this.clean = false;
+			this.tags = configs.notCleanTags();
+			console.log("[Cleaner]: No tags defined and clean is false");
+		}
+		else return;
+	}
+	else
+	{
+		if ((data.clean !== undefined) && (data.clean !== null) && (data.clean === false))
+		{
+			this.clean = false;
+		}
+	}
+
 	try
 	{
-		this.tags = JSON.parse(tags, function (key, value) {
-			
-			if (key == "*")
+		if((typeof this.tags) !== "object")
+		{
+			this.tags = JSON.parse(tags, function (key, value) {
+				
+				if (key == "*")
+					return value;
+
+				if (value == "*")
+					return [];
+
+				if (value.length === 0)
+					return [];
+
 				return value;
-
-			if (value == "*")
-				return [];
-
-			if (value.length === 0)
-				return [];
-
-			return value;
-		});
+			});
+		}
 
 		if (isEmpty(this.tags))
 		{
@@ -66,6 +91,7 @@ var Cleaner = function (tags)
 	}
 	catch(e)
 	{
+		console.log("[Cleaner]: Error parsing json. Tags: ", this.tags);
 		this.tags = undefined;
 		this.allTagsForbidden = true;
 		this.allAttribsForbidden = true;
@@ -106,7 +132,7 @@ var Cleaner = function (tags)
 	this.isForbidden = function (tagname, tagAttribs)
 	{
 		// IF last tag forbidden there is no need to test this one
-		if (this.isLastTagForbidden() === true)
+		if ((this.isLastTagForbidden() === true) && (this.clean === true))
 			return true;
 
 		// Find out if all tags are forbidden and attributes.
@@ -253,11 +279,12 @@ var Cleaner = function (tags)
 		this.finalText += '' + '<' + tag;
 		
 		var newAttributes = configs.newAttributes()[tag];
+		console.log("[Cleaner]: tag: " + tag + " undefined");
 		if (newAttributes !== undefined)
 			for (var newAttrib in newAttributes)
 				attribs[newAttrib] = newAttributes[newAttrib];
 		
-		for(var attrib in attribs)
+		for (var attrib in attribs)
 		{
 			if (attribs.hasOwnProperty(attrib))
 				this.finalText += ' ' + attrib + '="' + attribs[attrib] + '"';
@@ -291,13 +318,14 @@ var Cleaner = function (tags)
 		{
 			var isForbidden = context.isForbidden(name, attribs);
 			context.addLastTag(name, isForbidden);
-			
-			if (isForbidden === false)
+			console.log("[Cleaner]:[onopentag] -> tag: " + name + " isForbidden: " + isForbidden);
+
+			if ((isForbidden === false) && (context.clean === true))
 				context.openTag(name, attribs);
 		},
 		ontext: function (text)
 		{
-			if (context.isLastTagForbidden() === false)
+			if (((context.isLastTagForbidden() === false) && (context.clean === true)) || ((context.isLastTagForbidden() === true) && (context.clean === false)))
 				context.finalText += text;
 		},
 		onclosetag: function (name)
@@ -305,7 +333,7 @@ var Cleaner = function (tags)
 			if (context.lastTags.length > 0)
 			{
 				var lastTag = context.lastTags.pop();
-				if (lastTag.forbidden === false)
+				if ((lastTag.forbidden === false) && (context.clean === true))
 					context.closeTag(name);
 			}
 		}
@@ -316,6 +344,8 @@ Cleaner.prototype = {
 
 	start: function (src, callback)
 	{
+		console.log("[Cleaner]: Starting...");
+		console.log("[Cleaner]: List of tags: ", this.tags);
 		if ((src === undefined) || (src === null))
 			return buildResponse(true, "Error no src specified");
 

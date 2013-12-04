@@ -5,6 +5,37 @@ var tagsToAddAttributes = {
 	}
 };
 
+var notCleanTags = {
+	"b" : "*", 
+	"br" : "*", 
+	"center" : "*", 
+	"h1" : "*", 
+	"h2" : "*", 
+	"h3" : "*", 
+	"h4" : "*", 
+	"h5" : "*", 
+	"h6" : "*", 
+	"i" : "*", 
+	"li" : "*", 
+	"p" : "*", 
+	"span" : "*", 
+	"strong" : "*"
+};
+
+// Variable that defines how the process should run
+// 0 - Single, no cluster is used
+// 1 - Multiple, cluster is used
+var runMode = 0;
+
+
+exports.runMode = function ()
+{
+	if ((runMode < 0) || (runMode > 1))
+		return 0;
+
+	return runMode;
+}
+
 exports.specialTags = function ()
 {
 	return specialTags;
@@ -13,6 +44,11 @@ exports.specialTags = function ()
 exports.newAttributes = function()
 {
 	return tagsToAddAttributes;
+};
+
+exports.notCleanTags = function()
+{
+	return notCleanTags;
 };
 
 exports.http = {
