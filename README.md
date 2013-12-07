@@ -1,7 +1,7 @@
 HTML Cleaner
 =================
 
-A service in NodeJS that allows you to specify a custom array of tags to be removed from a text, usually an HTML page.<br \><br \>In this moment the service works in cluster, using all the processors available on the machine to provide max performance.<br \><br \>Uses package.json to solve all dependencies.
+<p>A service in NodeJS that allows you to specify a custom array of tags to be removed from a text, usually an HTML page.<br />As been added to, the ability of remove tags but leave the text inside them. It can be useful if you need to grab the title, images and description from a webpage.</p><p>This service can works in cluster mode, that uses more than just one processor and can be defined on the configs file and in single mode, where only one instance running at one processor.</p><p>Uses package.json to solve all dependencies.</p><p><b>New configuration</b> to personalize the working mode of the service.
 
 <h2>HTTP Methods</h2>
 <ul>
@@ -24,6 +24,11 @@ Parameters accepted by the service
 <li><b>array</b> - multiple html pages</li>
 </ul>
 </li>
+<li><b>url</b> - the url that will be used to retrieve the html
+<ul>
+<li><b>single</b> - an unique url</li>
+</ul>
+</li>
 <li><b>format</b> - the format that should be used in the output
 <ul>
 <li><b>json</b> - result will be outputed in json</li>
@@ -41,7 +46,6 @@ Parameters accepted by the service
 
 <h2>TODO</h2>
 <ul>
-<li><b style="font-size: x-large;">Support load of html from an url, to avoid send of too much information on the socket</b></li>
 <li><b style="font-size: x-large;">Work on configs to better customization of service</b></li>
 <li><b style="font-size: x-large;">Finish and complete documentation aka Readme</b></li>
 <li><b style="font-size: x-large;">Improve performance</b></li>
