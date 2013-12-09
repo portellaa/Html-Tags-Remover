@@ -30,7 +30,7 @@ var Cleaner = function (data)
 		if (((data.clean !== undefined) || (data.clean !== null)) && ((data.clean == false) || (data.clean == 'false')))
 		{
 			this.clean = false;
-			this.tags = configs.notCleanTags();
+			data.tags = configs.notCleanTags();
 			console.log("[Cleaner]: No tags defined and clean is false");
 		}
 		else return;
@@ -45,9 +45,9 @@ var Cleaner = function (data)
 
 	try
 	{
-		if((typeof this.tags) !== "object")
+		if((typeof data.tags) !== "object")
 		{
-			this.tags = JSON.parse(tags, function (key, value) {
+			this.tags = JSON.parse(data.tags, function (key, value) {
 				
 				if (key == "*")
 					return value;

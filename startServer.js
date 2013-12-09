@@ -56,11 +56,9 @@ var handleRequest = function (response, data, cb) {
     var result = {code: 400, message: 'No parameters specified.', format: data.format || "json"};
     var cleaner = new Cleaner({"tags": data.tags, "clean": data.clean});
 
-    console.log(data);
-    console.log("Src is instanceof array: ", (data["src"] instanceof Array));
-    console.log("Src[] is instanceof array: ", (data["src[]"] instanceof Array));
-
-    console.log("Src typeof: ", (typeof(data["src"])));
+    // console.log("Src is instanceof array: ", (data["src"] instanceof Array));
+    // console.log("Src[] is instanceof array: ", (data["src[]"] instanceof Array));
+    // console.log("Tags: ", typeof(data.tags));
 
     if (data.hasOwnProperty("src") && (!(data.src instanceof Array)))
     {
