@@ -281,7 +281,7 @@ var Cleaner = function (data)
 		this.finalText += '' + '<' + tag;
 		
 		var newAttributes = configs.newAttributes()[tag];
-		console.log("[Cleaner]: tag: " + tag + " undefined");
+		// console.log("[Cleaner]: tag: " + tag + " undefined");
 		if (newAttributes !== undefined)
 			for (var newAttrib in newAttributes)
 				attribs[newAttrib] = newAttributes[newAttrib];
@@ -328,7 +328,7 @@ var Cleaner = function (data)
 		{
 			var isForbidden = context.isForbidden(name, attribs);
 			context.addLastTag(name, isForbidden);
-			console.log("[Cleaner]:[onopentag] -> tag: " + name + " isForbidden: " + isForbidden);
+			// console.log("[Cleaner]:[onopentag] -> tag: " + name + " isForbidden: " + isForbidden);
 
 			if (name === "img")
 				context.img.push(attribs);

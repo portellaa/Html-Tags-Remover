@@ -57,7 +57,10 @@ var handleRequest = function (response, data, cb) {
     var cleaner = new Cleaner({"tags": data.tags, "clean": data.clean});
 
     console.log(data);
-    console.log("Src is instanceof array: " + (data.src instanceof Array));
+    console.log("Src is instanceof array: ", (data["src"] instanceof Array));
+    console.log("Src[] is instanceof array: ", (data["src[]"] instanceof Array));
+
+    console.log("Src typeof: ", (typeof(data["src"])));
 
     if (data.hasOwnProperty("src") && (!(data.src instanceof Array)))
     {
@@ -65,9 +68,15 @@ var handleRequest = function (response, data, cb) {
 
         sendToCleaner(response, cleaner, data, cb);
     }
-    else if ((data.hasOwnProperty("src") || data.hasOwnProperty("src[]")) && ((data.src instanceof Array)))
+    else if (data.hasOwnProperty("src") && (data["src"] instanceof Array))
     {
-        data.src = [ data["src"] ];
+        // data.src = data["src"];
+
+        sendToCleaner(response, cleaner, data, cb);
+    }
+    else if (data.hasOwnProperty("src[]") && (data["src[]"] instanceof Array))
+    {
+        data.src = data["src[]"];
 
         sendToCleaner(response, cleaner, data, cb);
     }
