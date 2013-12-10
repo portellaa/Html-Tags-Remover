@@ -127,13 +127,14 @@ var getHTMLFromURL = function(response, cleaner, data, cb)
 {
     console.log("Getting RAW from: ", data.url);
 // http.get(data.url,
+
+    var patt = new RegExp("http://(.*)","i");
+    if (patt.test(data.url) == false)
+        data.url = "http://" + data.url;
+
     request(data.url, function(error, res, body) {
 
-        console.log("Got response: ", res);
-        console.log("Body: ", body);
-        console.log("Error: ", error);
-
-        return;
+        console.log("Got response status code: ", res.statusCode);
 
         if (res.statusCode !== 200)
         {

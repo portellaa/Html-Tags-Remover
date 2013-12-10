@@ -61,6 +61,7 @@ var Cleaner = function (data)
 				return value;
 			});
 		}
+		else this.tags = data.tags;
 
 		if (isEmpty(this.tags))
 		{
