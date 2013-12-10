@@ -9,7 +9,8 @@
   "dependencies": {
     "cluster2": ">=0.4.x",
     "express": "3.4.x",
-    "htmlparser2": "3.3.x"
+    "htmlparser2": "3.3.x",
+	"request": "2.x"
   },
   "engine": "node >= 0.4.1"
 }

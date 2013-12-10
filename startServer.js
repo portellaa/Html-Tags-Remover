@@ -2,6 +2,7 @@ var configs = require('./configs.js');
 
 var Cluster = require('cluster2');
 
+var request = require('request');
 var http = require('http');
 var express = require('express');
 var app;
@@ -125,36 +126,51 @@ var getCB = function(request, response)
 var getHTMLFromURL = function(response, cleaner, data, cb)
 {
     console.log("Getting RAW from: ", data.url);
-    http.get(data.url, function(res) {
+// http.get(data.url,
+    request(data.url, function(error, res, body) {
 
-        console.log("Got response: " + res.statusCode);
+        console.log("Got response: ", res);
+        console.log("Body: ", body);
+        console.log("Error: ", error);
+
+        return;
 
         if (res.statusCode !== 200)
         {
-            cb(response, {code: 400, message: 'No src to process.', format: data.format || "json"});
+            cb(response, {code: 400, message: 'Error processing URL: ' + data.url, format: data.format || "json"});
             return;
         }
 
-        var encoding = 'utf8';
-        var headers = res.headers;
-        if (headers.hasOwnProperty("content-type"))
+        if (error != null)
         {
-            var patt = new RegExp("charset=(.*)","i");
-            var charset = patt.exec(headers["content-type"]);
-            console.log("charset: ", charset[1]);
+            cb(response, {code: 400, message: error, format: data.format || "json"});
+            return;
         }
-        res.setEncoding(encoding);
-        
-        var finalData = "";
-        res.on("data", function(data) {
-            finalData += data;
-        });
 
-        res.on("end", function() {
-            data.src = finalData;
-            sendToCleaner(response, cleaner, data, cb, encoding);
-            // cb(response, {code: 200, message: finalData, format: data.format || "text"})
-        });
+        data.src = body;
+        sendToCleaner(response, cleaner, data, cb);
+
+// ########### OLD CODE THAT USING NodeJS HTTP Lib ###############
+        // var encoding = 'utf8';
+        // var headers = res.headers;
+        // if (headers.hasOwnProperty("content-type"))
+        // {
+        //     var patt = new RegExp("charset=(.*)","i");
+        //     var charset = patt.exec(headers["content-type"]);
+        //     console.log("charset: ", charset[1]);
+        // }
+        // res.setEncoding(encoding);
+        
+        // var finalData = "";
+        // res.on("data", function(data) {
+        //     finalData += data;
+        // });
+
+        // res.on("end", function() {
+        //     data.src = finalData;
+        //     sendToCleaner(response, cleaner, data, cb, encoding);
+        //     // cb(response, {code: 200, message: finalData, format: data.format || "text"})
+        // });
 
     }).on('error', function(e) {
         console.log("Got error: " + e.message);
